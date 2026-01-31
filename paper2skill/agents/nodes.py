@@ -1,7 +1,15 @@
 """Agent nodes for the multi-agent workflow."""
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 import json
+
+# Well-known libraries and tools that can be identified in documents
+# This list can be extended as needed without modifying extraction logic
+KNOWN_LIBRARIES = [
+    "NumPy", "PyTorch", "TensorFlow", "NetworkX", "Redis", "Docker", "Kubernetes",
+    "Pandas", "Scikit-learn", "Keras", "Flask", "Django", "FastAPI", "SQLAlchemy",
+    "React", "Vue", "Angular", "Node", "Express", "MongoDB", "PostgreSQL", "MySQL"
+]
 
 
 class DocumentUnderstandingAgent:
@@ -258,12 +266,13 @@ class ToolIdentificationAgent:
                         "type": "framework"
                     })
         
-        # Pattern 3: Look for well-known library/tool names (likely proper nouns)
-        # These typically have specific capitalization patterns
+        # Pattern 3: Look for well-known library/tool names from the configurable list
+        # Build regex pattern from KNOWN_LIBRARIES constant
+        known_libs_pattern = r'\b(' + '|'.join(KNOWN_LIBRARIES) + r')\b'
         known_patterns = [
             r'\b(Python\s*\d+(?:\.\d+)?)\b',
-            r'\b(NumPy|PyTorch|TensorFlow|NetworkX|Redis|Docker|Kubernetes)\b',
-            r'\b([A-Z][a-z]+(?:[A-Z][a-z]+)+)\b',  # CamelCase names
+            known_libs_pattern,
+            r'\b([A-Z][a-z]+(?:[A-Z][a-z]+)+)\b',  # CamelCase names like "TensorFlow"
         ]
         for pattern in known_patterns:
             for match in re.finditer(pattern, text):
@@ -345,13 +354,20 @@ class ValueExtractionAgent:
         value_name = "Extracted Method"
         value_description = ""
         
+        # More precise regex pattern for multi-word names
+        # Matches: "Word Word Word" with proper capitalization
+        multi_word_name = r'[A-Z][a-z]*(?:\s+[A-Z][a-z]*)*'
+        
         # Look for key value indicators - prioritize named algorithms/models
         lines = text.split('\n')
         
         # First, try to find "introduce/present the X (ABC)" pattern
         for line in lines:
             # Pattern: "introduce/present the Name Algorithm (ABC)"
-            match = re.search(r'(?:introduce|present|propose)\s+the\s+([A-Z][a-zA-Z\s]+)\s*\(([A-Z]{2,})\)', line)
+            match = re.search(
+                rf'(?:introduce|present|propose)\s+the\s+({multi_word_name})\s*\(([A-Z]{{2,}})\)',
+                line
+            )
             if match:
                 full_name = match.group(1).strip()
                 acronym = match.group(2)
@@ -359,7 +375,10 @@ class ValueExtractionAgent:
                 break
             
             # Pattern: "the Name Algorithm (ABC) that..."
-            match = re.search(r'the\s+([A-Z][a-zA-Z\s]+(?:Algorithm|Model|Framework|Architecture))\s*\(([A-Z]{2,})\)', line)
+            match = re.search(
+                rf'the\s+({multi_word_name}\s*(?:Algorithm|Model|Framework|Architecture))\s*\(([A-Z]{{2,}})\)',
+                line
+            )
             if match:
                 full_name = match.group(1).strip()
                 acronym = match.group(2)
@@ -367,7 +386,10 @@ class ValueExtractionAgent:
                 break
             
             # Pattern: "Name Algorithm/Model" without acronym
-            match = re.search(r'(?:the\s+)?([A-Z][a-zA-Z\s]+(?:Algorithm|Model|Framework|Architecture|Method))\b', line)
+            match = re.search(
+                rf'(?:the\s+)?({multi_word_name}\s*(?:Algorithm|Model|Framework|Architecture|Method))\b',
+                line
+            )
             if match and value_name == "Extracted Method":
                 potential_name = match.group(1).strip()
                 # Skip if it's just "Novel Algorithm" - look for more specific name

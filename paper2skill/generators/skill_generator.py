@@ -127,8 +127,9 @@ This skill document is designed to be actionable and self-contained:
         theorems = state.get("theorems", [])
         tools = state.get("tools", [])
         results = state.get("results", [])
-        useful_value = state.get("useful_value", {}) or {}
-        implementation_guide = state.get("implementation_guide", {}) or {}
+        # Use 'or {}' to handle None values from state (e.g., if workflow didn't set these)
+        useful_value = state.get("useful_value") or {}
+        implementation_guide = state.get("implementation_guide") or {}
 
         # Extract skill information
         skill_name = useful_value.get("name", cls._generate_title(document_path))
@@ -224,7 +225,8 @@ This skill document is designed to be actionable and self-contained:
     @staticmethod
     def _format_core_principles(key_principles: List[str], concepts: List[str]) -> str:
         """Format the core principles section."""
-        principles = key_principles if key_principles else concepts[:5]
+        # Handle None/empty cases for both inputs
+        principles = key_principles if key_principles else (concepts[:5] if concepts else [])
         
         if not principles:
             return "*Core principles will be derived from the implementation.*"
