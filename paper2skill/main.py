@@ -3,6 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
+from typing import Optional
 
 from paper2skill.loaders import MultiFormatLoader
 from paper2skill.agents import SkillBuilderWorkflow
@@ -10,7 +11,13 @@ from paper2skill.generators import SkillMarkdownGenerator
 from paper2skill.utils import get_llm, setup_environment
 
 
-def process_document(input_path: str, output_path: str = None, use_llm: bool = True):
+def process_document(
+    input_path: str,
+    output_path: str = None,
+    use_llm: bool = True,
+    model: Optional[str] = None,
+    config_path: Optional[str] = None
+):
     """
     Process a document and generate a Skill.md file.
     
@@ -18,6 +25,8 @@ def process_document(input_path: str, output_path: str = None, use_llm: bool = T
         input_path: Path to the input document
         output_path: Path for the output Skill.md file
         use_llm: Whether to use LLM for enhanced processing
+        model: Name of the model configuration to use (from config file)
+        config_path: Path to configuration file
     """
     # Setup environment
     setup_environment()
@@ -34,8 +43,9 @@ def process_document(input_path: str, output_path: str = None, use_llm: bool = T
     # Initialize LLM if requested
     llm = None
     if use_llm:
-        print("Initializing language model...")
-        llm = get_llm()
+        model_display = model if model else "default"
+        print(f"Initializing language model ({model_display})...")
+        llm = get_llm(model_name=model, config_path=config_path)
         if llm:
             print("✓ Language model initialized")
         else:
@@ -95,8 +105,14 @@ Examples:
   paper2skill document.pdf
   paper2skill paper.docx -o custom_output.md
   paper2skill presentation.pptx --no-llm
+  paper2skill paper.pdf --model anthropic
+  paper2skill paper.pdf --config /path/to/config.yaml
   
 Supported formats: PDF, Word (.docx), PowerPoint (.pptx), Markdown (.md)
+
+Model Configuration:
+  Create a config.yaml file to configure multiple AI models.
+  See config.example.yaml for available options.
         """
     )
     
@@ -118,6 +134,18 @@ Supported formats: PDF, Word (.docx), PowerPoint (.pptx), Markdown (.md)
     )
     
     parser.add_argument(
+        "--model", "-m",
+        help="Model configuration to use from config file (e.g., openai, anthropic, azure)",
+        default=None
+    )
+    
+    parser.add_argument(
+        "--config", "-c",
+        help="Path to configuration file (default: searches for config.yaml)",
+        default=None
+    )
+    
+    parser.add_argument(
         "--version",
         action="version",
         version="Paper2Skill 0.1.0"
@@ -134,7 +162,9 @@ Supported formats: PDF, Word (.docx), PowerPoint (.pptx), Markdown (.md)
     process_document(
         input_path=args.input,
         output_path=args.output,
-        use_llm=not args.no_llm
+        use_llm=not args.no_llm,
+        model=args.model,
+        config_path=args.config
     )
 
 

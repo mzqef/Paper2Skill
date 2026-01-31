@@ -1,0 +1,59 @@
+# Paper2Skill Configuration File
+# Copy this file to config.yaml and customize for your needs.
+#
+# This file allows you to configure multiple AI models and easily
+# switch between them by changing the default_model setting.
+
+# Select which model to use by default
+# Options: openai, anthropic, azure, ollama, or any custom model name defined below
+default_model: openai
+
+# Model configurations
+# Each model requires a provider and model-specific settings
+models:
+  # OpenAI Configuration
+  openai:
+    provider: openai
+    model_name: gpt-3.5-turbo  # Options: gpt-4, gpt-4-turbo, gpt-3.5-turbo, etc.
+    temperature: 0
+    # api_key: your-api-key-here  # Or use OPENAI_API_KEY environment variable
+
+  # OpenAI GPT-4 Configuration (higher quality, higher cost)
+  openai-gpt4:
+    provider: openai
+    model_name: gpt-4
+    temperature: 0
+    # api_key: your-api-key-here  # Or use OPENAI_API_KEY environment variable
+
+  # Anthropic Claude Configuration
+  anthropic:
+    provider: anthropic
+    model_name: claude-3-sonnet-20240229  # Options: claude-3-opus, claude-3-sonnet, claude-3-haiku
+    temperature: 0
+    # api_key: your-api-key-here  # Or use ANTHROPIC_API_KEY environment variable
+
+  # Azure OpenAI Configuration
+  azure:
+    provider: azure
+    deployment_name: your-deployment-name
+    api_version: "2024-02-15-preview"
+    azure_endpoint: https://your-resource.openai.azure.com/
+    temperature: 0
+    # api_key: your-api-key-here  # Or use AZURE_OPENAI_API_KEY environment variable
+
+  # Ollama (Local) Configuration
+  ollama:
+    provider: ollama
+    model_name: llama2  # Options: llama2, mistral, codellama, etc.
+    base_url: http://localhost:11434
+    temperature: 0
+
+# Environment Variables Reference:
+# 
+# Instead of putting API keys in this file, you can use environment variables:
+# - OPENAI_API_KEY: API key for OpenAI models
+# - ANTHROPIC_API_KEY: API key for Anthropic Claude models
+# - AZURE_OPENAI_API_KEY: API key for Azure OpenAI
+# - PAPER2SKILL_MODEL: Override the default_model setting (e.g., "anthropic")
+#
+# Environment variables take precedence over values in this file.
