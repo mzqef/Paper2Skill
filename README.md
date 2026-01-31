@@ -100,13 +100,73 @@ Document Input → Document Loader → Multi-Agent Analysis → Value Extraction
 
 ## Configuration
 
-### Environment Variables
+### Configuration File
 
-Create a `.env` file for configuration:
+Create a `config.yaml` file to configure multiple AI models. Copy `config.example.yaml` to get started:
 
 ```bash
-# Optional: For enhanced LLM-powered analysis
-OPENAI_API_KEY=your_api_key_here
+cp config.example.yaml config.yaml
+```
+
+Example configuration:
+
+```yaml
+# Select which model to use by default
+default_model: openai
+
+# Model configurations
+models:
+  openai:
+    provider: openai
+    model_name: gpt-3.5-turbo
+    temperature: 0
+    # api_key: your-api-key-here  # Or use environment variable
+
+  anthropic:
+    provider: anthropic
+    model_name: claude-3-sonnet-20240229
+    temperature: 0
+
+  azure:
+    provider: azure
+    deployment_name: your-deployment-name
+    azure_endpoint: https://your-resource.openai.azure.com/
+    api_version: "2024-02-15-preview"
+
+  ollama:
+    provider: ollama
+    model_name: llama2
+    base_url: http://localhost:11434
+```
+
+### Switching Models
+
+Use the `--model` flag to switch between configured models:
+
+```bash
+# Use the default model (from config.yaml)
+paper2skill document.pdf
+
+# Use a specific model
+paper2skill document.pdf --model anthropic
+paper2skill document.pdf --model ollama
+
+# Use a custom config file
+paper2skill document.pdf --config /path/to/config.yaml
+```
+
+### Environment Variables
+
+Create a `.env` file for API keys:
+
+```bash
+# API Keys (environment variables take precedence)
+OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+AZURE_OPENAI_API_KEY=your_azure_api_key_here
+
+# Override default model selection
+PAPER2SKILL_MODEL=anthropic
 ```
 
 Without an API key, the system runs in fallback mode with rule-based extraction.
