@@ -1,5 +1,6 @@
 """Configuration management for Paper2Skill."""
 
+import copy
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -58,7 +59,7 @@ def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
     Returns:
         Configuration dictionary with model settings
     """
-    config = DEFAULT_CONFIG.copy()
+    config = copy.deepcopy(DEFAULT_CONFIG)
     
     # Find config file
     if config_path:
@@ -96,13 +97,13 @@ def _merge_config(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, A
     Returns:
         Merged configuration dictionary
     """
-    result = base.copy()
+    result = copy.deepcopy(base)
     
     for key, value in override.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = _merge_config(result[key], value)
         else:
-            result[key] = value
+            result[key] = copy.deepcopy(value)
     
     return result
 

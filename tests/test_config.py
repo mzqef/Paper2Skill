@@ -152,6 +152,20 @@ class TestApplyEnvOverrides:
         
         assert result["models"]["my-custom-gpt4"]["api_key"] == "openai-key"
 
+    def test_existing_api_key_not_overwritten_by_env(self, monkeypatch):
+        """Test that existing api_key in config is not overwritten by environment variable."""
+        monkeypatch.setenv("OPENAI_API_KEY", "env-key")
+        
+        config = {
+            "models": {
+                "openai": {"provider": "openai", "api_key": "config-key"}
+            }
+        }
+        result = _apply_env_overrides(config)
+        
+        # The existing api_key should NOT be overwritten
+        assert result["models"]["openai"]["api_key"] == "config-key"
+
 
 class TestGetModelConfig:
     """Tests for get_model_config function."""
