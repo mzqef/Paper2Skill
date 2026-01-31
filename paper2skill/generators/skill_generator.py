@@ -1,7 +1,7 @@
 """Generator for creating Skill.md files."""
 
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -117,7 +117,7 @@ This skill document is designed to be used by AI systems to understand and repro
         markdown_content = cls.TEMPLATE.format(
             title=title,
             source_document=document_path,
-            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            timestamp=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
             overview=overview,
             concepts_section=concepts_section,
             theorems_section=theorems_section,
