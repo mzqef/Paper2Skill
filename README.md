@@ -1,17 +1,21 @@
 # Paper2Skill
 
-An intelligent Agent Skill Builder that transforms academic papers and technical documents into structured Skill.md files designed for AI systems.
+An intelligent Agent Skill Builder that transforms academic papers and technical documents into actionable Skill.md files designed for AI systems.
 
 ## Overview
 
-Paper2Skill uses a multi-agent system built on LangChain/LangGraph to analyze documents and extract key information including concepts, theorems, tools, and results. The output is a self-contained Skill.md file that AI systems can use to understand and reproduce the work described in the source document.
+Paper2Skill uses a multi-agent system built on LangChain/LangGraph to analyze documents and extract **what is useful** - the core theory, algorithm, model, or idea that can be built or implemented. The output is a self-contained Skill.md file that provides step-by-step implementation guidance, not just a paper review.
+
+**Key Philosophy:** The goal is to generate actionable skills. For example, from "Attention is All You Need," the system extracts how to **build a Transformer module**, not just summarize the paper.
 
 ## Features
 
+✅ **Actionable Output**: Generates implementation guides with steps, tools, and validation criteria  
+✅ **Value Extraction**: Identifies the core useful thing (algorithm, model, architecture) from papers  
 ✅ **Multi-Format Support**: Process PDF, Word (.docx), PowerPoint (.pptx), and Markdown documents  
 ✅ **LangChain/LangGraph Ecosystem**: Built on industry-standard AI frameworks  
-✅ **Multi-Agent Analysis**: Specialized agents for understanding, concept extraction, and tool identification  
-✅ **Tool Recognition**: Identifies tools even if they don't exist yet (based on descriptions)  
+✅ **Multi-Agent Analysis**: 5 specialized agents for understanding, extraction, and implementation guidance  
+✅ **Tool Recognition**: Identifies required tools and libraries  
 ✅ **Self-Contained Output**: Generates comprehensive Skill.md files ready for AI consumption  
 ✅ **Fallback Mode**: Works without LLM for basic processing  
 
@@ -80,16 +84,18 @@ markdown = SkillMarkdownGenerator.generate(state, "output.skill.md")
 
 ### Multi-Agent System
 
-The system uses a LangGraph-based workflow with specialized agents:
+The system uses a LangGraph-based workflow with 5 specialized agents:
 
 1. **Document Understanding Agent**: Analyzes overall document structure and content
 2. **Concept Extraction Agent**: Identifies main concepts, theorems, and results
-3. **Tool Identification Agent**: Recognizes tools, methods, and techniques (including conceptual ones)
+3. **Tool Identification Agent**: Recognizes tools, methods, and techniques
+4. **Value Extraction Agent**: Identifies what is USEFUL from the paper (core algorithm, model, architecture)
+5. **Implementation Guide Agent**: Generates actionable steps to build/implement the useful thing
 
 ### Workflow
 
 ```
-Document Input → Document Loader → Multi-Agent Analysis → Skill.md Generation
+Document Input → Document Loader → Multi-Agent Analysis → Value Extraction → Implementation Guide → Skill.md Generation
 ```
 
 ## Configuration
@@ -107,14 +113,18 @@ Without an API key, the system runs in fallback mode with rule-based extraction.
 
 ## Output Format
 
-The generated Skill.md includes:
+The generated Skill.md is **action-oriented** and includes:
 
-- **Overview**: Document summary and main topics
-- **Main Concepts**: Extracted key concepts
-- **Theorems and Propositions**: Mathematical and theoretical foundations
-- **Tools and Methods**: Technologies, algorithms, and techniques
-- **Key Results**: Main findings and outcomes
-- **Usage Instructions**: How AI systems should use this skill
+- **What You Will Build**: Description of the core useful thing
+- **Why This Is Useful**: Value proposition and use cases
+- **Prerequisites**: Required knowledge and background
+- **Core Principles**: Key concepts that make it work
+- **Implementation Guide**: Step-by-step instructions to build it
+- **Required Tools**: Libraries, frameworks, and dependencies
+- **External Resources**: References and additional materials
+- **Validation Criteria**: How to verify the implementation works
+- **Theoretical Foundation**: Supporting theorems and propositions
+- **Expected Results**: Documented outcomes and benchmarks
 
 ## Examples
 
@@ -169,9 +179,10 @@ This implementation fulfills all specified requirements:
 
 1. ✅ **LangChain/LangGraph Ecosystem**: Uses LangGraph for multi-agent orchestration
 2. ✅ **Multiple Input Types**: Supports PDF, Word, Markdown, PowerPoint
-3. ✅ **Understanding & Reproduction**: Multi-agent system extracts and structures reproducible information
-4. ✅ **Tool Handling**: Recognizes tools even without implementation (description-based)
-5. ✅ **Self-Contained Skill.md**: Generates comprehensive, standalone instruction documents
+3. ✅ **Value Extraction**: Identifies what is useful from papers (core algorithm, model, or idea)
+4. ✅ **Implementation Guidance**: Generates actionable steps to build the useful thing
+5. ✅ **Tool Handling**: Recognizes required tools and libraries
+6. ✅ **Self-Contained Skill.md**: Generates comprehensive, actionable skill documents
 
 ## Contributing
 

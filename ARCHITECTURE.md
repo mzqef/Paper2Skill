@@ -105,6 +105,7 @@ Paper2Skill is a multi-agent system built on the LangChain/LangGraph ecosystem t
 #### a. State Management (`state.py`)
 - `AgentState`: TypedDict defining shared state across agents
 - Tracks document text, extracted information, and metadata
+- Includes `useful_value` and `implementation_guide` for actionable output
 
 #### b. Agent Nodes (`nodes.py`)
 
@@ -123,8 +124,20 @@ Paper2Skill is a multi-agent system built on the LangChain/LangGraph ecosystem t
 **ToolIdentificationAgent**:
 - Identifies algorithms and methods
 - Recognizes libraries and frameworks
-- Detects techniques (including conceptual/non-existent ones)
-- Provides tool descriptions
+- Extracts tool names and descriptions
+- Provides tool type classification
+
+**ValueExtractionAgent** (NEW):
+- Identifies WHAT IS USEFUL from the paper
+- Extracts the core algorithm, model, or architecture
+- Determines prerequisites and key principles
+- Focuses on buildable/implementable value
+
+**ImplementationGuideAgent** (NEW):
+- Generates actionable implementation steps
+- Identifies required tools and resources
+- Creates validation criteria
+- Produces external resource references
 
 #### c. Workflow (`workflow.py`)
 - `SkillBuilderWorkflow`: LangGraph-based orchestration
@@ -134,26 +147,29 @@ Paper2Skill is a multi-agent system built on the LangChain/LangGraph ecosystem t
 
 **Workflow Sequence**:
 ```
-understand → extract_concepts → identify_tools → END
+understand → extract_concepts → identify_tools → extract_value → generate_implementation → END
 ```
 
 ### 3. Skill.md Generator (`paper2skill/generators/`)
 
-**Purpose**: Generate structured, AI-readable Skill.md files.
+**Purpose**: Generate actionable, AI-readable Skill.md files focused on building/implementing.
 
 **Components**:
 - `SkillMarkdownGenerator`: Main generator class
-- Template-based approach
-- Formats extracted information into markdown sections
+- Action-oriented template
+- Formats extracted information into implementation-focused sections
 
 **Output Sections**:
-1. **Overview**: Document summary
-2. **Main Concepts**: Extracted concepts
-3. **Theorems and Propositions**: Mathematical/theoretical foundations
-4. **Tools and Methods**: Algorithms, libraries, techniques
-5. **Key Results**: Main findings
-6. **How to Use This Skill**: Instructions for AI systems
-7. **Source Document Analysis**: Original understanding
+1. **What You Will Build**: Core useful thing to implement
+2. **Why This Is Useful**: Value proposition
+3. **Prerequisites**: Required knowledge and background
+4. **Core Principles**: Key concepts that make it work
+5. **Implementation Guide**: Step-by-step build instructions
+6. **Required Tools**: Libraries, frameworks, dependencies
+7. **External Resources**: References and additional materials
+8. **Validation Criteria**: How to verify success
+9. **Theoretical Foundation**: Supporting theorems
+10. **Expected Results**: Documented benchmarks
 
 ### 4. Utilities (`paper2skill/utils/`)
 
@@ -180,8 +196,10 @@ understand → extract_concepts → identify_tools → END
 3. **Understanding**: DocumentUnderstandingAgent analyzes structure
 4. **Extraction**: ConceptExtractionAgent finds concepts, theorems, results
 5. **Tool Identification**: ToolIdentificationAgent recognizes methods/tools
-6. **Generation**: SkillMarkdownGenerator creates Skill.md
-7. **Output**: Self-contained Skill.md file saved
+6. **Value Extraction**: ValueExtractionAgent identifies what is useful (core algorithm, model, idea)
+7. **Implementation Guide**: ImplementationGuideAgent generates actionable build steps
+8. **Generation**: SkillMarkdownGenerator creates action-oriented Skill.md
+9. **Output**: Self-contained, implementation-focused Skill.md file saved
 
 ## LLM Integration
 
@@ -224,6 +242,8 @@ AgentState = {
     "theorems": List[Dict],      # Theorems/lemmas
     "tools": List[Dict],         # Tools/methods
     "results": List[Dict],       # Key findings
+    "useful_value": Dict,        # Core useful thing (algorithm, model, etc.)
+    "implementation_guide": Dict, # Steps, tools, resources for building
     "skill_markdown": str,       # Generated output
     "error": str                 # Error tracking
 }

@@ -7,6 +7,8 @@ from .nodes import (
     DocumentUnderstandingAgent,
     ConceptExtractionAgent,
     ToolIdentificationAgent,
+    ValueExtractionAgent,
+    ImplementationGuideAgent,
 )
 
 
@@ -32,17 +34,24 @@ class SkillBuilderWorkflow:
         understanding_agent = DocumentUnderstandingAgent(self.llm)
         concept_agent = ConceptExtractionAgent(self.llm)
         tool_agent = ToolIdentificationAgent(self.llm)
+        value_agent = ValueExtractionAgent(self.llm)
+        implementation_agent = ImplementationGuideAgent(self.llm)
 
         # Add nodes
         workflow.add_node("understand", understanding_agent)
         workflow.add_node("extract_concepts", concept_agent)
         workflow.add_node("identify_tools", tool_agent)
+        workflow.add_node("extract_value", value_agent)
+        workflow.add_node("generate_implementation", implementation_agent)
 
-        # Define edges
+        # Define edges - extended workflow:
+        # understand -> extract_concepts -> identify_tools -> extract_value -> generate_implementation -> END
         workflow.set_entry_point("understand")
         workflow.add_edge("understand", "extract_concepts")
         workflow.add_edge("extract_concepts", "identify_tools")
-        workflow.add_edge("identify_tools", END)
+        workflow.add_edge("identify_tools", "extract_value")
+        workflow.add_edge("extract_value", "generate_implementation")
+        workflow.add_edge("generate_implementation", END)
 
         return workflow.compile()
 
@@ -65,6 +74,8 @@ class SkillBuilderWorkflow:
             "theorems": None,
             "tools": None,
             "results": None,
+            "useful_value": None,
+            "implementation_guide": None,
             "skill_markdown": None,
             "error": None,
         }
