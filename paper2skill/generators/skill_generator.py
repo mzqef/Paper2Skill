@@ -148,9 +148,10 @@ This skill document is designed to be used by AI systems to understand and repro
         overview_parts = []
         
         if understanding:
-            # Take first few sentences from understanding
-            sentences = understanding.split('.')[:3]
-            overview_parts.append('.'.join(sentences) + '.')
+            # Take first few sentences from understanding, filtering empty strings
+            sentences = [s.strip() for s in understanding.split('.')[:3] if s.strip()]
+            if sentences:
+                overview_parts.append('.'.join(sentences) + '.')
         
         if concepts and len(concepts) > 0:
             overview_parts.append(

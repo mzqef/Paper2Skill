@@ -87,7 +87,11 @@ def demo_custom_output():
     print("=" * 60)
     
     doc_path = Path(__file__).parent.parent / "examples" / "sample_paper.md"
-    output_path = "/tmp/custom_skill_demo.md"
+    
+    # Use cross-platform temporary directory
+    import tempfile
+    tmpdir = tempfile.gettempdir()
+    output_path = Path(tmpdir) / "custom_skill_demo.md"
     
     print(f"\n1. Processing: {doc_path.name}")
     print(f"2. Custom output: {output_path}")
@@ -96,15 +100,14 @@ def demo_custom_output():
     workflow = SkillBuilderWorkflow(llm=None)
     state = workflow.run(text, str(doc_path))
     
-    SkillMarkdownGenerator.generate(state, output_path)
+    SkillMarkdownGenerator.generate(state, str(output_path))
     
     # Verify output
-    output_file = Path(output_path)
-    if output_file.exists():
-        size = output_file.stat().st_size
+    if output_path.exists():
+        size = output_path.stat().st_size
         print(f"\n✓ File created: {output_path}")
         print(f"✓ File size: {size} bytes")
-        output_file.unlink()  # Clean up
+        output_path.unlink()  # Clean up
     
     print("\n✓ Demo 3 Complete!\n")
 

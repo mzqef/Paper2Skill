@@ -1,12 +1,13 @@
 """Tests for the skill generator."""
 
+from pathlib import Path
 from paper2skill.generators import SkillMarkdownGenerator
 
 
 def test_skill_generation():
     """Test generating a Skill.md from state."""
     state = {
-        "document_path": "/test/sample.pdf",
+        "document_path": str(Path("test") / "sample.pdf"),
         "understanding": "This is a test document about algorithms.",
         "main_concepts": ["Algorithm Design", "Optimization", "Distributed Systems"],
         "theorems": [

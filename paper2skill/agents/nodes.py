@@ -108,7 +108,7 @@ class ConceptExtractionAgent:
         for line in lines:
             stripped = line.strip()
             if len(line.split()) < 10 and stripped and not stripped.startswith('#'):
-                if stripped and stripped[0].isupper():
+                if stripped[0].isupper():
                     concepts.append(stripped)
         
         return concepts[:10], theorems[:5], results[:5]
