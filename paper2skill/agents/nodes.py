@@ -107,7 +107,7 @@ class ConceptExtractionAgent:
         # Extract general concepts from headings (lines that are short and in title case)
         for line in lines:
             stripped = line.strip()
-            if len(line.split()) < 10 and stripped and not stripped.startswith('#'):
+            if len(line.split()) < 10 and len(stripped) > 0 and not stripped.startswith('#'):
                 if stripped[0].isupper():
                     concepts.append(stripped)
         
