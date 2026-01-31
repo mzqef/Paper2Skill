@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paper2skill"
+version = "0.1.0"
+description = "An Agent Skill Builder transforming paperwork into a Skill.md used by AI"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "langchain>=0.1.0",
+    "langgraph>=0.0.20",
+    "langchain-openai>=0.0.5",
+    "pypdf>=3.17.0",
+    "python-docx>=1.0.0",
+    "python-pptx>=0.6.21",
+    "markdown>=3.5",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[project.scripts]
+paper2skill = "paper2skill.main:main"
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
